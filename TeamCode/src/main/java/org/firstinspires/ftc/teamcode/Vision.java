@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @Autonomous(name = "Signal Sleeve Test")
-public class VisionTest extends LinearOpMode {
+public class Vision extends LinearOpMode {
 
     private SleeveDetection sleeveDetection;
     private OpenCvCamera camera;

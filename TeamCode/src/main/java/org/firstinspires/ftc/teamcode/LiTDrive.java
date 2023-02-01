@@ -24,7 +24,6 @@ public class LiTDrive extends LinearOpMode {
     private DcMotor armMotor = null;
     //private DcMotor duckMotor = null;
 
-    @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -57,6 +56,11 @@ public class LiTDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
         while (opModeIsActive()) {
+
+            // test android studio building
+            if (gamepad1.a) {
+                telemetry.addData("android studio is working", "4324");
+            }
 
             // MANIPULATOR CODE
 
@@ -106,7 +110,7 @@ public class LiTDrive extends LinearOpMode {
             // SNIPER MODE FOR THE UP/DOWN ON THE ARM
             double arm = gamepad2.left_stick_y;
             // LEFT STICK IS LEFT JOYCON
-            double sniperPercent = 0.35;
+            double sniperPercent = 0.25;
 
             if (gamepad2.right_bumper) {
                 k = 1.5;
@@ -149,7 +153,7 @@ public class LiTDrive extends LinearOpMode {
 
             // SET SPEED BASED ON DRIVER
             // double speed = 0.78; OLD SPEED
-            double QJSpeed = 1.2;
+            double QJSpeed = 2;
 
             // DRIVE SYSTEM
 
