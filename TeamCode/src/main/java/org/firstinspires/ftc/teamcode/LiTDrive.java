@@ -154,7 +154,6 @@ public class LiTDrive extends LinearOpMode {
                 backRightMotor.setPower(BR * 0);
 
             }
-
             // NORMAL DRIVE
             else {
                 frontLeftMotor.setPower(FL * QJSpeed);
