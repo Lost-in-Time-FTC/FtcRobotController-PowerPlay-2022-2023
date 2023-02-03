@@ -98,7 +98,7 @@ public class LiTDrive extends LinearOpMode {
                 k = 0;
             }
             else {
-                armMotor.setPower(arm*(-k));
+                armMotor.setPower(arm * (-k));
             }
 
             // move the slides
