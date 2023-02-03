@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -22,6 +24,7 @@ public class LiTDrive extends LinearOpMode {
     private Servo twistServo = null;
     private DcMotor elevatorMotor = null;
     private DcMotor armMotor = null;
+    TouchSensor touchSensor;
     //private DcMotor duckMotor = null;
 
     public void runOpMode() {
@@ -39,6 +42,7 @@ public class LiTDrive extends LinearOpMode {
         twistServo = hardwareMap.get(Servo.class, "twist");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor"); //1
         armMotor = hardwareMap.get(DcMotor.class, "armMotor"); //0
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -56,86 +60,65 @@ public class LiTDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
         while (opModeIsActive()) {
-
-            // test android studio building
-            if (gamepad1.a) {
-                telemetry.addData("android studio is working", "4324");
-            }
-
-            // MANIPULATOR CODE
-
-            // CLAW VARIABLES
-
-            // CLAW OPEN IS 0.3
+            // do not change these values
             double clawOpen = 0.3;
-
-            // CLAW CLOSE IS 0
             double clawClose = 0;
-
-            //CLAW ROTATE UP IS 0.73
-            //probably do not change this
             double clawRotateUp = 0.73;
-
-            //CLAW ROTATE DOWN IS 0
-            // probably do not change this
             double clawRotateDown = 0;
 
-            // CLOSE CLAW
-            if (gamepad2.right_trigger > 0) {
+            // open/close claw
+            if (gamepad2.a) {
                 clawServo.setPosition(clawClose);
             }
-
-            // OPEN CLAW
-            else if (gamepad2.left_trigger > 0) {
+            else if (gamepad2.right_trigger > 0) {
                 clawServo.setPosition(clawOpen);
             }
 
-            // ROTATE CLAW UP
-            if (gamepad2.right_bumper) {
+            // rotate claw
+            if (gamepad2.left_bumper) {
                 twistServo.setPosition(clawRotateUp);
             }
-            // ROTATE CLAW DOWN
-            if (gamepad2.left_bumper) {
+            if (gamepad2.right_bumper) {
                 twistServo.setPosition(clawRotateDown);
             }
 
+            // warning: suspicous looking arm code
             double k = 0;
             if (gamepad2.left_stick_y > 0) {
-                // telemetry.addData("Worked", "Run Time: " + runtime.toString());
-                k = 1;
-            } else {
                 k = 1;
             }
-
-            // SNIPER MODE FOR THE UP/DOWN ON THE ARM
+            else {
+                k = 1;
+            }
             double arm = gamepad2.left_stick_y;
-            // LEFT STICK IS LEFT JOYCON
-            double sniperPercent = 0.25;
-
+            double sniperPercent = 0.35;
             if (gamepad2.right_bumper) {
                 k = 1.5;
-                armMotor.setPower(arm * (-k) * sniperPercent);
+                armMotor.setPower(arm*(-k)*sniperPercent);
                 k = 0;
-            } else {
-
-                armMotor.setPower(arm * (-k));
+            }
+            else {
+                armMotor.setPower(arm*(-k));
             }
 
-            // SLIDES/ELEVATOR MOTOR
-
-            // DOWN
+            // move the slides
+            // down
             if (gamepad2.right_stick_y > 0.25) {
                 elevatorMotor.setPower(-0.45);
             }
-
-            // UP
+            // up
             else if (gamepad2.right_stick_y < -0.25) {
                 elevatorMotor.setPower(0.45);
             }
-
-            // BRAKE
             else {
                 elevatorMotor.setPower(0);
+            }
+
+            // cycle mode auto close
+            if (gamepad2.left_trigger > 0) {
+                if (touchSensor.isPressed()) {
+                    clawServo.setPosition(clawClose);
+                }
             }
 
             // DRIVE CODE
@@ -153,8 +136,7 @@ public class LiTDrive extends LinearOpMode {
 
             // SET SPEED BASED ON DRIVER
             // double speed = 0.78; OLD SPEED
-            double QJSpeed = 2;
-
+            double QJSpeed = 1.75;
             // DRIVE SYSTEM
 
             // SNIPER MODE
@@ -188,5 +170,4 @@ public class LiTDrive extends LinearOpMode {
             telemetry.update();
 
         }
-    }
-}
+    }}
