@@ -138,7 +138,6 @@ public class LiTDrive extends LinearOpMode {
             // double speed = 0.78; OLD SPEED
             double QJSpeed = 1.75;
             // DRIVE SYSTEM
-
             // SNIPER MODE
             if (gamepad1.left_trigger > 0) {
                 frontLeftMotor.setPower(FL * QJSpeed * sniperPercent);
