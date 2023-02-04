@@ -13,13 +13,13 @@ public class SleeveDetection extends OpenCvPipeline {
     YELLOW  = Parking Left
     CYAN    = Parking Middle
     MAGENTA = Parking Right
-     */
+    */
 
+    // TOP_LEFT anchor point for the bounding box
+    private static final Point SLEEVE_TOP_LEFT_ANCHOR_POINT = new Point(135, 45);
     // Width and height for the bounding box
     public static int REGION_WIDTH = 90;
     public static int REGION_HEIGHT = 50;
-    // TOPLEFT anchor point for the bounding box
-    private static final Point SLEEVE_TOPLEFT_ANCHOR_POINT = new Point(135, 45);
     // Color definitions
     private final Scalar
             YELLOW = new Scalar(255, 255, 0),
@@ -27,11 +27,11 @@ public class SleeveDetection extends OpenCvPipeline {
             MAGENTA = new Scalar(255, 0, 255);
     // Anchor point definitions
     Point sleeve_pointA = new Point(
-            SLEEVE_TOPLEFT_ANCHOR_POINT.x,
-            SLEEVE_TOPLEFT_ANCHOR_POINT.y);
+            SLEEVE_TOP_LEFT_ANCHOR_POINT.x,
+            SLEEVE_TOP_LEFT_ANCHOR_POINT.y);
     Point sleeve_pointB = new Point(
-            SLEEVE_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-            SLEEVE_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+            SLEEVE_TOP_LEFT_ANCHOR_POINT.x + REGION_WIDTH,
+            SLEEVE_TOP_LEFT_ANCHOR_POINT.y + REGION_HEIGHT);
     // Running variable storing the parking position
     private volatile ParkingPosition position = ParkingPosition.LEFT;
 

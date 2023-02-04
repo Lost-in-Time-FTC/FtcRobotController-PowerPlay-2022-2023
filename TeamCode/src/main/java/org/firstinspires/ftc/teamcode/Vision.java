@@ -11,12 +11,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Signal Sleeve Test")
 public class Vision extends LinearOpMode {
-
-    private SleeveDetection sleeveDetection;
-    private OpenCvCamera camera;
-
     // Name of the Webcam to be set in the config
     private final String webcamName = "Webcam 1";
+    private SleeveDetection sleeveDetection;
+    private OpenCvCamera camera;
 
     @Override
     public void runOpMode() throws InterruptedException {

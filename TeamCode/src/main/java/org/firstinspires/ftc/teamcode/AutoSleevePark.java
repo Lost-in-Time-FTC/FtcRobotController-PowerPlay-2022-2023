@@ -10,20 +10,17 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Color Sleeve Parking")
 public class AutoSleevePark extends LinearOpMode {
-
-    // Hardware things
-    private Hardware hardware;
-
-    private SleeveDetection sleeveDetection;
-    private OpenCvCamera camera;
-
     // Name of the Webcam to be set in the config
     private final String webcamName = "Webcam 1";
+    // Hardware
+    private Hardware hardware;
+    private SleeveDetection sleeveDetection;
+    private OpenCvCamera camera;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        // Init hardware things
+        // Init hardware
         hardware = new Hardware(hardwareMap);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -48,13 +45,12 @@ public class AutoSleevePark extends LinearOpMode {
         }
 
         waitForStart();
-        SleeveDetection.ParkingPosition pos = sleeveDetection.getPosition();
+        SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
         hardware.driveForwardTime(0.5, 900);
-        if (pos == SleeveDetection.ParkingPosition.LEFT) {
+        if (position == SleeveDetection.ParkingPosition.LEFT) {
             hardware.driveLeftTime(0.7, 1500);
-        } else if (pos == SleeveDetection.ParkingPosition.RIGHT) {
+        } else if (position == SleeveDetection.ParkingPosition.RIGHT) {
             hardware.driveRightTime(0.5, 1300);
         }
-
     }
 }

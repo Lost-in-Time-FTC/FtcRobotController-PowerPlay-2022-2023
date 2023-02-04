@@ -6,25 +6,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class Hardware {
-    double clawPosition = 0.5;
-    private DcMotor frontLeftMotor = null;
-    private DcMotor frontRightMotor = null;
-    private DcMotor backLeftMotor = null;
-    private DcMotor backRightMotor = null;
-    private Servo clawServo = null;
     private final Servo twistServo = null;
-    private DcMotor elevatorMotor = null;
-    private DcMotor armMotor = null;
-    //private DcMotor duckMotor = null;
+    double clawPosition = 0.5;
+    private DcMotor frontLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor backRightMotor;
+    private Servo clawServo;
+    private DcMotor elevatorMotor;
+    private DcMotor armMotor;
+    // private DcMotor duckMotor = null;
 
     public Hardware(HardwareMap hardwareMap) {
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
-        clawServo = hardwareMap.get(Servo.class, "Servo"); //
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor"); //1
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor"); //0
+        clawServo = hardwareMap.get(Servo.class, "Servo");
+        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
 
 
         // Most robots need the motor on one side to be reversed to drive forward
