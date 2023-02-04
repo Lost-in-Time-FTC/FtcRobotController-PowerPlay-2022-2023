@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,9 +12,10 @@ import com.qualcomm.robotcore.util.Range;
 
 public class LiTDrive extends LinearOpMode {
 
-    double clawPosition = 0.5;
     // Declare OpMode members.
     private final ElapsedTime runtime = new ElapsedTime();
+    double clawPosition = 0.5;
+    TouchSensor touchSensor;
     private DcMotor frontLeftMotor = null;
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
@@ -24,7 +24,6 @@ public class LiTDrive extends LinearOpMode {
     private Servo twistServo = null;
     private DcMotor elevatorMotor = null;
     private DcMotor armMotor = null;
-    TouchSensor touchSensor;
     //private DcMotor duckMotor = null;
 
     public void runOpMode() {
@@ -53,7 +52,7 @@ public class LiTDrive extends LinearOpMode {
         armMotor.setDirection(DcMotor.Direction.FORWARD);
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        // Wait for the game to start (driver presses PLAY)
+        // wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
@@ -69,8 +68,7 @@ public class LiTDrive extends LinearOpMode {
             // open/close claw
             if (gamepad2.a) {
                 clawServo.setPosition(clawClose);
-            }
-            else if (gamepad2.right_trigger > 0) {
+            } else if (gamepad2.right_trigger > 0) {
                 clawServo.setPosition(clawOpen);
             }
 
@@ -82,48 +80,28 @@ public class LiTDrive extends LinearOpMode {
                 twistServo.setPosition(clawRotateDown);
             }
 
-            // warning: suspicous looking arm code
-            double k = 0;
-            if (gamepad2.left_stick_y > 0) {
-                k = 1;
-            }
-            else {
-                k = 1;
-            }
-            double arm = gamepad2.left_stick_y;
-            double sniperPercent = 0.35;
-            if (gamepad2.right_bumper) {
-                k = 1.5;
-                armMotor.setPower(arm*(-k)*sniperPercent);
-                k = 0;
-            }
-            else {
-                armMotor.setPower(arm * (-k));
-            }
+            double armPower = -gamepad2.left_stick_y;
+            armMotor.setPower(armPower);
 
-            // move the slides
-            // down
+            // move linear slides down
             if (gamepad2.right_stick_y > 0.25) {
                 elevatorMotor.setPower(-0.45);
             }
-            // up
+            // move linear slides up
             else if (gamepad2.right_stick_y < -0.25) {
                 elevatorMotor.setPower(0.45);
-            }
-            else {
+            } else {
                 elevatorMotor.setPower(0);
             }
 
             // cycle mode auto close
-            if (gamepad2.left_trigger > 0) {
-                if (touchSensor.isPressed()) {
-                    clawServo.setPosition(clawClose);
-                }
+            if ((gamepad2.left_trigger > 0) && (touchSensor.isPressed())) {
+                clawServo.setPosition(clawClose);
             }
 
             // DRIVE CODE
 
-            //MECANUM
+            // MECANUM
             double drive = gamepad1.left_stick_y;
             double turn = -gamepad1.right_stick_x;
             double strafe = -gamepad1.left_stick_x;
@@ -137,6 +115,7 @@ public class LiTDrive extends LinearOpMode {
             // SET SPEED BASED ON DRIVER
             // double speed = 0.78; OLD SPEED
             double QJSpeed = 1.75;
+            double sniperPercent = 0.35;
             // DRIVE SYSTEM
             // SNIPER MODE
             if (gamepad1.left_trigger > 0) {
@@ -163,9 +142,10 @@ public class LiTDrive extends LinearOpMode {
             }
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Status", "Run Time: " + runtime);
             // telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
 
         }
-    }}
+    }
+}
