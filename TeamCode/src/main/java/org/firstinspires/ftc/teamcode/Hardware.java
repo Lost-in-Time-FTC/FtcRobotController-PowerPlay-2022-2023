@@ -15,6 +15,7 @@ public class Hardware {
     public Servo clawServo;
     public DcMotor elevatorMotor;
     public DcMotor armMotor;
+
     // private DcMotor duckMotor = null;
 
     public Hardware(HardwareMap hardwareMap) {

@@ -17,6 +17,7 @@ public class LiTDrive extends LinearOpMode {
     final double CLAW_CLOSE = 0;
     final double CLAW_ROTATE_UP = 0.73;
     final double CLAW_ROTATE_DOWN = 0.1;
+
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
     TouchSensor touchSensor;
