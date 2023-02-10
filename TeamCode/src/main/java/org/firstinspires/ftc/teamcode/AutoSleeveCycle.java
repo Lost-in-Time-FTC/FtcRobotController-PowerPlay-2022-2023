@@ -11,6 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Color Sleeve Cycle")
 public class AutoSleeveCycle extends LinearOpMode {
+    static final int MOTOR_TICK_COUNTS = 1120;
     // Name of the Webcam to be set in the config
     private final String webcamName = "Webcam 1";
     // Hardware
@@ -18,11 +19,8 @@ public class AutoSleeveCycle extends LinearOpMode {
     private SleeveDetection sleeveDetection;
     private OpenCvCamera camera;
 
-    static final int MOTOR_TICK_COUNTS = 1120;
-
     @Override
     public void runOpMode() throws InterruptedException {
-
         // Init hardware
         hardware = new Hardware(hardwareMap);
 
@@ -57,9 +55,9 @@ public class AutoSleeveCycle extends LinearOpMode {
         hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        double circumference = 3.14*4;
-        double rotationsNeeded = 18/circumference;
-        int encoderDrivingTarget = (int)(rotationsNeeded*1120);
+        double circumference = 3.14 * 4;
+        double rotationsNeeded = 18 / circumference;
+        int encoderDrivingTarget = (int) (rotationsNeeded * 1120);
 
         // set target
         hardware.frontRightMotor.setTargetPosition(encoderDrivingTarget);
@@ -93,13 +91,9 @@ public class AutoSleeveCycle extends LinearOpMode {
         // the parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
             telemetry.addData("left", "4324");
-        }
-
-        else if (position == SleeveDetection.ParkingPosition.CENTER) {
+        } else if (position == SleeveDetection.ParkingPosition.CENTER) {
             telemetry.addData("center", "4324");
-        }
-
-        else if (position == SleeveDetection.ParkingPosition.RIGHT) {
+        } else if (position == SleeveDetection.ParkingPosition.RIGHT) {
             telemetry.addData("right", "4324");
         }
     }
