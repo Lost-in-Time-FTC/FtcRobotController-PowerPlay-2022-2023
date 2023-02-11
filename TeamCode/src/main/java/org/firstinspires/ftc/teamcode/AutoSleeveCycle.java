@@ -165,10 +165,10 @@ public class AutoSleeveCycle extends LinearOpMode {
         hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.frontRightMotor.setTargetPosition(125);
-        hardware.backRightMotor.setTargetPosition(125);
-        hardware.frontLeftMotor.setTargetPosition(125);
-        hardware.backLeftMotor.setTargetPosition(125);
+        hardware.frontRightMotor.setTargetPosition(150);
+        hardware.backRightMotor.setTargetPosition(150);
+        hardware.frontLeftMotor.setTargetPosition(150);
+        hardware.backLeftMotor.setTargetPosition(150);
 
         hardware.frontRightMotor.setPower(0.25);
         hardware.frontLeftMotor.setPower(0.25);
