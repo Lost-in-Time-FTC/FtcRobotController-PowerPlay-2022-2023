@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,10 +9,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware {
     private final Servo twistServo = null;
-    public DcMotor frontLeftMotor;
-    public DcMotor frontRightMotor;
-    public DcMotor backLeftMotor;
-    public DcMotor backRightMotor;
+    public DcMotorEx frontLeftMotor;
+    public DcMotorEx frontRightMotor;
+    public DcMotorEx backLeftMotor;
+    public DcMotorEx backRightMotor;
     public Servo clawServo;
     public DcMotor elevatorMotor;
     public DcMotor armMotor;
@@ -20,10 +21,10 @@ public class Hardware {
     // private DcMotor duckMotor = null;
 
     public Hardware(HardwareMap hardwareMap) {
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
+        backRightMotor = hardwareMap.get(DcMotorEx.class, "backRightMotor");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         clawServo = hardwareMap.get(Servo.class, "Servo");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
