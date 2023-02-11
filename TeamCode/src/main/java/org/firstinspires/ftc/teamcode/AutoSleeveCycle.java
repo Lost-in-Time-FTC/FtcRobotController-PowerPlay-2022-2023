@@ -45,25 +45,31 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.update();
         }
 
-        waitForStart();
-        SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
-        // the cycle
-
         // reset encoders
         hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        double circumference = 3.14 * 4;
-        double rotationsNeeded = 18 / circumference;
-        int encoderDrivingTarget = (int) (rotationsNeeded * 1120);
+//        sleep(1000);
+//
+//        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        waitForStart();
+        SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
+
+        // the cycle
 
         // set target
-        hardware.frontRightMotor.setTargetPosition(encoderDrivingTarget);
-        hardware.frontLeftMotor.setTargetPosition(encoderDrivingTarget);
-        hardware.backRightMotor.setTargetPosition(encoderDrivingTarget);
-        hardware.backLeftMotor.setTargetPosition(encoderDrivingTarget);
+        hardware.frontRightMotor.setTargetPosition(2000);
+        hardware.backRightMotor.setTargetPosition(2000);
+        hardware.frontLeftMotor.setTargetPosition(2000);
+        hardware.backLeftMotor.setTargetPosition(2000);
+
+        hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set speed
         hardware.frontRightMotor.setPower(0.5);
@@ -76,6 +82,7 @@ public class AutoSleeveCycle extends LinearOpMode {
         hardware.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         hardware.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //runLift(2000000000);
 
         while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
             telemetry.addData("Path", "Moving");
