@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware {
     private final Servo twistServo = null;
-    double clawPosition = 0.5;
     public DcMotor frontLeftMotor;
     public DcMotor frontRightMotor;
     public DcMotor backLeftMotor;
@@ -15,6 +14,7 @@ public class Hardware {
     public Servo clawServo;
     public DcMotor elevatorMotor;
     public DcMotor armMotor;
+    double clawPosition = 0.5;
 
     // private DcMotor duckMotor = null;
 
