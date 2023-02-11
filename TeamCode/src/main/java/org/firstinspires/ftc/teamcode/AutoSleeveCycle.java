@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -58,21 +59,31 @@ public class AutoSleeveCycle extends LinearOpMode {
 
         // set target
 
+        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hardware.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.frontRightMotor.setTargetPosition(10000);
-        hardware.backRightMotor.setTargetPosition(10000);
-        hardware.frontLeftMotor.setTargetPosition(10000);
-        hardware.backLeftMotor.setTargetPosition(10000);
+        hardware.frontRightMotor.setPositionPIDFCoefficients(30);
+        hardware.backRightMotor.setPositionPIDFCoefficients(30);
+        hardware.frontLeftMotor.setPositionPIDFCoefficients(30);
+        hardware.backLeftMotor.setPositionPIDFCoefficients(30);
+
+        hardware.frontRightMotor.setTargetPosition(5000);
+        hardware.backRightMotor.setTargetPosition(5000);
+        hardware.frontLeftMotor.setTargetPosition(5000);
+        hardware.backLeftMotor.setTargetPosition(5000);
 
         // set speed
-        hardware.frontRightMotor.setVelocity(2400);
-        hardware.frontLeftMotor.setVelocity(2400);
-        hardware.backRightMotor.setVelocity(2400);
-        hardware.backLeftMotor.setVelocity(2400);
+        hardware.frontRightMotor.setVelocity(537.7);
+        hardware.frontLeftMotor.setVelocity(537.7);
+        hardware.backRightMotor.setVelocity(537.7);
+        hardware.backLeftMotor.setVelocity(537.7);
 
         // run
         hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -84,14 +95,11 @@ public class AutoSleeveCycle extends LinearOpMode {
         while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
             telemetry.addData("Path", "Moving");
 
-//            while (opModeIsActive()) {
-//                telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
-//                telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
-//                telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
-//                telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
-//                telemetry.update();
-//            }
-
+            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
+            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
+            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
+            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
+            telemetry.update();
         }
 
         // stop motor
