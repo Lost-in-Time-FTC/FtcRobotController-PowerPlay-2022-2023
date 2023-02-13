@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -17,6 +18,10 @@ public class AutoSleeveCycle extends LinearOpMode {
     private Hardware hardware;
     private SleeveDetection sleeveDetection;
     private OpenCvCamera camera;
+    private Servo clawServo;
+    private Servo twistServo;
+    private DcMotor elevatorMotor;
+    private DcMotor armMotor;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,6 +43,11 @@ public class AutoSleeveCycle extends LinearOpMode {
             public void onError(int errorCode) {
             }
         });
+
+        clawServo = hardwareMap.get(Servo.class, "Servo");
+        twistServo = hardwareMap.get(Servo.class, "twist");
+        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
 
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
@@ -95,6 +105,9 @@ public class AutoSleeveCycle extends LinearOpMode {
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
+
+        // Arm cycle starts
+
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
