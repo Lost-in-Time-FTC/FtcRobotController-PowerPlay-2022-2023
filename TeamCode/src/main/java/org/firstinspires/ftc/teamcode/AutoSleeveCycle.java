@@ -3,12 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 @Autonomous(name = "Color Sleeve Cycle")
 public class AutoSleeveCycle extends LinearOpMode {
@@ -21,7 +25,14 @@ public class AutoSleeveCycle extends LinearOpMode {
     private Servo clawServo;
     private Servo twistServo;
     private DcMotor elevatorMotor;
-    private DcMotor armMotor;
+    private DcMotorEx armMotor;
+
+    public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
+
+    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
+    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
+
+    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); //timer
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,27 +58,23 @@ public class AutoSleeveCycle extends LinearOpMode {
         clawServo = hardwareMap.get(Servo.class, "Servo");
         twistServo = hardwareMap.get(Servo.class, "twist");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
 
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
             telemetry.update();
         }
 
-        // reset encoders
-
-//        sleep(1000);
-//
-//        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         waitForStart();
+
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
 
         // The cycle
         // Go forward
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllMotorTargetPosition(2300);
-        setAllMotorPower(0.25);
+        setAllMotorTargetPosition(2200);
+        setAllMotorPower(0.5);
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
@@ -75,10 +82,10 @@ public class AutoSleeveCycle extends LinearOpMode {
         // Rotate right
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.frontRightMotor.setTargetPosition(-850);
-        hardware.backRightMotor.setTargetPosition(-850);
-        hardware.frontLeftMotor.setTargetPosition(850);
-        hardware.backLeftMotor.setTargetPosition(850);
+        hardware.frontRightMotor.setTargetPosition(-900);
+        hardware.backRightMotor.setTargetPosition(-900);
+        hardware.frontLeftMotor.setTargetPosition(900);
+        hardware.backLeftMotor.setTargetPosition(900);
 
         setAllMotorPower(0.25);
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -88,26 +95,35 @@ public class AutoSleeveCycle extends LinearOpMode {
         // Strafe left
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.frontRightMotor.setTargetPosition(400);
-        hardware.backRightMotor.setTargetPosition(-400);
-        hardware.frontLeftMotor.setTargetPosition(-400);
-        hardware.backLeftMotor.setTargetPosition(400);
+        hardware.frontRightMotor.setTargetPosition(250);
+        hardware.backRightMotor.setTargetPosition(-250);
+        hardware.frontLeftMotor.setTargetPosition(-250);
+        hardware.backLeftMotor.setTargetPosition(250);
 
-        setAllMotorPower(0.25);
+        setAllMotorPower(0.5);
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
 
-        // Go forward/line up with junction
+//      Go forward/line up with junction
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllMotorTargetPosition(150);
-        setAllMotorPower(0.25);
+        setAllMotorTargetPosition(250);
+        setAllMotorPower(0.5);
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
 
         // Arm cycle starts
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        PID(speed); //running the PID algorithm at defined speed
+        telemetry.update();
+
+        // Elapsed timer class from SDK, please use it, it's epic
+        ElapsedTime timer = new ElapsedTime();
+
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
@@ -149,5 +165,39 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
             telemetry.update();
         }
+    }
+
+    double lastError = 0;
+    double integral = 0;
+    //initializing our variables
+
+    public void PID(double targetVelocity){
+        PIDTimer.reset(); //resets the timer
+
+        double currentVelocity = armMotor.getVelocity();
+        double error = targetVelocity - currentVelocity; //pretty self explanatory--just finds the error
+
+        double deltaError = error - lastError; //finds how the error changes from the previous cycle
+        double derivative = deltaError / PIDTimer.time(); //deltaError/time gives the rate of change (sensitivity of the system)
+
+        integral += error * PIDTimer.time();
+        //continuously sums error accumulation to prevent steady-state error (friction, not enough p-gain to cause change)
+
+        pidGains.p = error * pidCoeffs.p;
+        //acts directly on the error; p-coefficient identifies how much to act upon it
+        // p-coefficient (very low = not much effect; very high = lots of overshoot/oscillations)
+        pidGains.i = integral * pidCoeffs.i;
+        //multiplies integrated error by i-coefficient constant
+        // i-coefficient (very high = fast reaction to steady-state error but lots of overshoot; very low = slow reaction to steady-state error)
+        // for velocity, because friction isn't a big issue, only reason why you would need i would be for insufficient correction from p-gain
+        pidGains.d = derivative * pidCoeffs.d;
+        //multiplies derivative by d-coefficient
+        // d-coefficient (very high = increased volatility; very low = too little effect on dampening system)
+
+        armMotor.setVelocity(pidGains.p + pidGains.i + pidGains.d + targetVelocity);
+        //adds up the P I D gains with the targetVelocity bias
+
+        lastError = error;
+        //makes our current error as our new last error for the next cycle
     }
 }

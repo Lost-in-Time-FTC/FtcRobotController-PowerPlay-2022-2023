@@ -113,9 +113,9 @@ public class LiTDrive extends LinearOpMode {
 
         // Strafing
         double FL = Range.clip(drive + strafe + turn, -0.5, 0.5);
-        double FR = Range.clip(drive - strafe + turn, -0.5, 0.5);
+        double FR = Range.clip(drive + strafe - turn, -0.5, 0.5);
         double BL = Range.clip(drive - strafe - turn, -0.5, 0.5);
-        double BR = Range.clip(drive + strafe - turn, -0.5, 0.5);
+        double BR = Range.clip(drive - strafe + turn, -0.5, 0.5);
 
         double QJSpeed = 1.75;
         double sniperPercent = 0.25;
