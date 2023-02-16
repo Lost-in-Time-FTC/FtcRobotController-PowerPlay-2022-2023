@@ -153,7 +153,7 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.update();
         }
     }
-    public void moveArm(int target, duoble power) {
+    public void moveArm(int target, double power) {
         hardware.armMotor.setTargetPosition(target);
         hardware.armMotor.setPower(power);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
