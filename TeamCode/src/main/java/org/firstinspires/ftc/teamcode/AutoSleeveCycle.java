@@ -55,11 +55,6 @@ public class AutoSleeveCycle extends LinearOpMode {
             }
         });
 
-        clawServo = hardwareMap.get(Servo.class, "Servo");
-        twistServo = hardwareMap.get(Servo.class, "twist");
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
-        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
             telemetry.update();
@@ -114,11 +109,8 @@ public class AutoSleeveCycle extends LinearOpMode {
         setAllMotorPower(0);
 
         // Arm cycle starts
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        moveArm(1000, 0.5);
+        moveArm(-1000, 0.5);
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
@@ -161,9 +153,10 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.update();
         }
     }
-        public void moveArm(int target, duoble){
-        }
-
+    public void moveArm(int target, duoble power) {
+        hardware.armMotor.setTargetPosition(target);
+        hardware.armMotor.setPower(power);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        hardware.armMotor.setPower(0);
     }
-
-    }
+}
