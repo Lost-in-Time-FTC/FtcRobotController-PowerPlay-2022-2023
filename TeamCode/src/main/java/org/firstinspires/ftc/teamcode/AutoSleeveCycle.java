@@ -57,12 +57,18 @@ public class AutoSleeveCycle extends LinearOpMode {
 
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
+            telemetry.addData("Path", "Moving");
+            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
+            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
+            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
+            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
+            telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
             telemetry.update();
         }
 
         waitForStart();
 
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
 
         // The cycle
