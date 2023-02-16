@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double CLAW_OPEN = 0.3;
-    final double CLAW_CLOSE = 0;
+    final double CLAW_OPEN = 0.4;
+    final double CLAW_CLOSE = 0.1;
     final double CLAW_ROTATE_UP = 0.73;
     final double CLAW_ROTATE_DOWN = 0.1;
 
@@ -113,9 +113,9 @@ public class LiTDrive extends LinearOpMode {
 
         // Strafing
         double FL = Range.clip(drive + strafe + turn, -0.5, 0.5);
-        double FR = Range.clip(drive + strafe - turn, -0.5, 0.5);
-        double BL = Range.clip(drive - strafe - turn, -0.5, 0.5);
-        double BR = Range.clip(drive - strafe + turn, -0.5, 0.5);
+        double FR = Range.clip(drive - strafe - turn, -0.5, 0.5);
+        double BL = Range.clip(drive - strafe + turn, -0.5, 0.5);
+        double BR = Range.clip(drive + strafe - turn, -0.5, 0.5);
 
         double QJSpeed = 1.75;
         double sniperPercent = 0.25;
