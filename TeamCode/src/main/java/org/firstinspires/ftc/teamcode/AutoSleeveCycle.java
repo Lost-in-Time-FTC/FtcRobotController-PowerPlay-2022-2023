@@ -67,9 +67,11 @@ public class AutoSleeveCycle extends LinearOpMode {
         }
 
         waitForStart();
-
-        hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //hardware.armMotor.setPositionPIDFCoefficients(20);
+        //hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         // The cycle
         // Go forward
@@ -115,8 +117,7 @@ public class AutoSleeveCycle extends LinearOpMode {
         setAllMotorPower(0);
 
         // Arm cycle starts
-        moveArm(1000, 0.5);
-        moveArm(-1000, 0.5);
+        moveArm(-3000, 1);
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
@@ -160,9 +161,13 @@ public class AutoSleeveCycle extends LinearOpMode {
         }
     }
     public void moveArm(int target, double power) {
-        hardware.armMotor.setTargetPosition(target);
-        hardware.armMotor.setPower(power);
-        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.armMotor.setPower(0);
+        double kp =5.0;
+        int threshold =500;
+        int error = target-
+                hardware.armMotor.getCurrentPosition();
+        while(Math.abs(error)>threshold)
+        {
+            hardware.armMotor.setPower(kp*error);
+        }
     }
 }
