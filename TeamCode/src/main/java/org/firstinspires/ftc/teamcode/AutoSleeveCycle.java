@@ -55,6 +55,11 @@ public class AutoSleeveCycle extends LinearOpMode {
             }
         });
 
+        clawServo = hardwareMap.get(Servo.class, "Servo");
+        twistServo = hardwareMap.get(Servo.class, "twist");
+        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
             telemetry.addData("Path", "Moving");
@@ -108,7 +113,7 @@ public class AutoSleeveCycle extends LinearOpMode {
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
 
-//      Go forward/line up with junction
+        // Go forward/line up with junction
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setAllMotorTargetPosition(250);
         setAllMotorPower(0.5);
@@ -160,13 +165,13 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.update();
         }
     }
+
     public void moveArm(int target, double power) {
-        double kp =5.0;
-        int threshold =500;
-        int error = target-
-                hardware.armMotor.getCurrentPosition();
-        while(Math.abs(error)>threshold)
-        {
+        double kp = 5.0;
+        int threshold = 500;
+        int error = target - hardware.armMotor.getCurrentPosition();
+
+        while (Math.abs(error) > threshold) {
             hardware.armMotor.setPower(kp*error);
         }
     }
