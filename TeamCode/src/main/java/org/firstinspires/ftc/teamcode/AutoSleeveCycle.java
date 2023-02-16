@@ -3,12 +3,16 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 @Autonomous(name = "Color Sleeve Cycle")
 public class AutoSleeveCycle extends LinearOpMode {
@@ -18,6 +22,17 @@ public class AutoSleeveCycle extends LinearOpMode {
     private Hardware hardware;
     private SleeveDetection sleeveDetection;
     private OpenCvCamera camera;
+    private Servo clawServo;
+    private Servo twistServo;
+    private DcMotor elevatorMotor;
+    private DcMotorEx armMotor;
+
+    public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
+
+    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
+    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
+
+    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); //timer
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -40,159 +55,70 @@ public class AutoSleeveCycle extends LinearOpMode {
             }
         });
 
+        clawServo = hardwareMap.get(Servo.class, "Servo");
+        twistServo = hardwareMap.get(Servo.class, "twist");
+        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+
         while (!isStarted()) {
             telemetry.addData("ROTATION: ", sleeveDetection.getPosition());
             telemetry.update();
         }
 
-        // reset encoders
-
-//        sleep(1000);
-//
-//        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         waitForStart();
+
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
 
         // The cycle
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        hardware.frontRightMotor.setTargetPosition(2300);
-        hardware.backRightMotor.setTargetPosition(2300);
-        hardware.frontLeftMotor.setTargetPosition(2300);
-        hardware.backLeftMotor.setTargetPosition(2300);
-
-        hardware.frontRightMotor.setPower(0.25);
-        hardware.frontLeftMotor.setPower(0.25);
-        hardware.backRightMotor.setPower(0.25);
-        hardware.backLeftMotor.setPower(0.25);
-
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
-            telemetry.addData("Path", "Moving");
-            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
-            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
-            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
-            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
-            telemetry.update();
-        }
-
-        hardware.frontRightMotor.setPower(0);
-        hardware.frontLeftMotor.setPower(0);
-        hardware.backRightMotor.setPower(0);
-        hardware.backLeftMotor.setPower(0);
+        // Go forward
+        setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setAllMotorTargetPosition(2300);
+        setAllMotorPower(0.5);
+        setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        trackCurrentPositionTelemetry();
+        setAllMotorPower(0);
 
         // Rotate right
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.frontRightMotor.setTargetPosition(-850);
-        hardware.backRightMotor.setTargetPosition(-850);
-        hardware.frontLeftMotor.setTargetPosition(850);
-        hardware.backLeftMotor.setTargetPosition(850);
+        hardware.frontRightMotor.setTargetPosition(-900);
+        hardware.backRightMotor.setTargetPosition(-900);
+        hardware.frontLeftMotor.setTargetPosition(900);
+        hardware.backLeftMotor.setTargetPosition(900);
 
-        hardware.frontRightMotor.setPower(0.25);
-        hardware.frontLeftMotor.setPower(0.25);
-        hardware.backRightMotor.setPower(0.25);
-        hardware.backLeftMotor.setPower(0.25);
+        setAllMotorPower(0.25);
+        setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        trackCurrentPositionTelemetry();
+        setAllMotorPower(0);
 
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Strafe left
+        setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
-            telemetry.addData("Path", "Moving");
-            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
-            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
-            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
-            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
-            telemetry.update();
-        }
+        hardware.frontRightMotor.setTargetPosition(350);
+        hardware.backRightMotor.setTargetPosition(-350);
+        hardware.frontLeftMotor.setTargetPosition(-350);
+        hardware.backLeftMotor.setTargetPosition(350);
 
-        hardware.frontRightMotor.setPower(0);
-        hardware.frontLeftMotor.setPower(0);
-        hardware.backRightMotor.setPower(0);
-        hardware.backLeftMotor.setPower(0);
+        setAllMotorPower(0.5);
+        setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        trackCurrentPositionTelemetry();
+        setAllMotorPower(0);
 
-        // strafe left
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//      Go forward/line up with junction
+        setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setAllMotorTargetPosition(250);
+        setAllMotorPower(0.5);
+        setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        trackCurrentPositionTelemetry();
+        setAllMotorPower(0);
 
-        hardware.frontRightMotor.setTargetPosition(400);
-        hardware.backRightMotor.setTargetPosition(-400);
-        hardware.frontLeftMotor.setTargetPosition(-400);
-        hardware.backLeftMotor.setTargetPosition(400);
+        // Arm cycle starts
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        hardware.frontRightMotor.setPower(0.25);
-        hardware.frontLeftMotor.setPower(0.25);
-        hardware.backRightMotor.setPower(0.25);
-        hardware.backLeftMotor.setPower(0.25);
 
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
-            telemetry.addData("Path", "Moving");
-            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
-            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
-            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
-            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
-            telemetry.update();
-        }
-
-        hardware.frontRightMotor.setPower(0);
-        hardware.frontLeftMotor.setPower(0);
-        hardware.backRightMotor.setPower(0);
-        hardware.backLeftMotor.setPower(0);
-
-        // go forward/line up
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        hardware.frontRightMotor.setTargetPosition(150);
-        hardware.backRightMotor.setTargetPosition(150);
-        hardware.frontLeftMotor.setTargetPosition(150);
-        hardware.backLeftMotor.setTargetPosition(150);
-
-        hardware.frontRightMotor.setPower(0.25);
-        hardware.frontLeftMotor.setPower(0.25);
-        hardware.backRightMotor.setPower(0.25);
-        hardware.backLeftMotor.setPower(0.25);
-
-        hardware.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        hardware.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
-            telemetry.addData("Path", "Moving");
-            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
-            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
-            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
-            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
-            telemetry.update();
-        }
-
-        hardware.frontRightMotor.setPower(0);
-        hardware.frontLeftMotor.setPower(0);
-        hardware.backRightMotor.setPower(0);
-        hardware.backLeftMotor.setPower(0);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
@@ -203,4 +129,41 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.addData("right", "4324");
         }
     }
-}
+
+    public void setAllMotorPower(double power) {
+        hardware.frontRightMotor.setPower(power);
+        hardware.frontLeftMotor.setPower(power);
+        hardware.backRightMotor.setPower(power);
+        hardware.backLeftMotor.setPower(power);
+    }
+
+    public void setAllMotorMode(DcMotor.RunMode mode) {
+        hardware.frontRightMotor.setMode(mode);
+        hardware.frontLeftMotor.setMode(mode);
+        hardware.backRightMotor.setMode(mode);
+        hardware.backLeftMotor.setMode(mode);
+    }
+
+    public void setAllMotorTargetPosition(int position) {
+        hardware.frontRightMotor.setTargetPosition(position);
+        hardware.backRightMotor.setTargetPosition(position);
+        hardware.frontLeftMotor.setTargetPosition(position);
+        hardware.backLeftMotor.setTargetPosition(position);
+    }
+
+    public void trackCurrentPositionTelemetry() {
+        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
+            telemetry.addData("Path", "Moving");
+            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
+            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
+            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
+            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+        public void moveArm(int target, duoble){
+        }
+
+    }
+
+    }

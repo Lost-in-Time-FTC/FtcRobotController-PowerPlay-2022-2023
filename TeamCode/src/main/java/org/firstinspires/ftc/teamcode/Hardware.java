@@ -15,7 +15,7 @@ public class Hardware {
     public DcMotorEx backRightMotor;
     public Servo clawServo;
     public DcMotor elevatorMotor;
-    public DcMotor armMotor;
+    public DcMotorEx armMotor;
     double clawPosition = 0.5;
 
     // private DcMotor duckMotor = null;
@@ -27,7 +27,7 @@ public class Hardware {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         clawServo = hardwareMap.get(Servo.class, "Servo");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
 
 
         // Most robots need the motor on one side to be reversed to drive forward
