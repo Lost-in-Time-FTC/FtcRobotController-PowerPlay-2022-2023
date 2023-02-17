@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,12 +12,15 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 @Autonomous(name = "Color Sleeve Cycle")
 public class AutoSleeveCycle extends LinearOpMode {
+    public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
+    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
     // Name of the Webcam to be set in the config
     private final String webcamName = "Webcam 1";
+    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
+    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); //timer
     // Hardware
     private Hardware hardware;
     private SleeveDetection sleeveDetection;
@@ -26,13 +29,6 @@ public class AutoSleeveCycle extends LinearOpMode {
     private Servo twistServo;
     private DcMotor elevatorMotor;
     private DcMotorEx armMotor;
-
-    public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
-
-    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
-    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
-
-    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); //timer
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -172,7 +168,7 @@ public class AutoSleeveCycle extends LinearOpMode {
         int error = target - hardware.armMotor.getCurrentPosition();
 
         while (Math.abs(error) > threshold) {
-            hardware.armMotor.setPower(kp*error);
+            hardware.armMotor.setPower(kp * error);
         }
     }
 }
