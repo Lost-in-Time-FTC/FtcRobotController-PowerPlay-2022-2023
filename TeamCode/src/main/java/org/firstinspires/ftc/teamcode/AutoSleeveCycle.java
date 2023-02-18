@@ -17,6 +17,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class AutoSleeveCycle extends LinearOpMode {
     public static double speed = 1200; //arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
     public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0); //PID coefficients that need to be tuned probably through FTC dashboard
+    final double CLAW_OPEN = 0.1;
+    final double CLAW_CLOSE = 0.4;
+    final double CLAW_ROTATE_UP = 0.73;
+    final double CLAW_ROTATE_DOWN = 0.1;
     // Name of the Webcam to be set in the config
     private final String webcamName = "Webcam 1";
     public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); //PID gains which we will define later in the process
@@ -64,6 +68,7 @@ public class AutoSleeveCycle extends LinearOpMode {
             telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
             telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
             telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
+            telemetry.addData("elevator ticks", elevatorMotor.getCurrentPosition());
             telemetry.update();
         }
 
@@ -75,6 +80,20 @@ public class AutoSleeveCycle extends LinearOpMode {
 
 
         // The cycle
+        hardware.clawServo.setPosition(CLAW_CLOSE);
+        sleep(200);
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPosition(900);
+        hardware.armMotor.setPower(0.5);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (hardware.armMotor.isBusy()) {
+            twistServo.setPosition(CLAW_ROTATE_UP);
+            telemetry.addData("Arm", "Moving");
+            telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
+            telemetry.update();
+        }
+        hardware.armMotor.setPower(0);
+
         // Go forward
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setAllMotorTargetPosition(2300);
@@ -99,26 +118,41 @@ public class AutoSleeveCycle extends LinearOpMode {
         // Strafe left
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        hardware.frontRightMotor.setTargetPosition(350);
-        hardware.backRightMotor.setTargetPosition(-350);
-        hardware.frontLeftMotor.setTargetPosition(-350);
-        hardware.backLeftMotor.setTargetPosition(350);
+        hardware.frontRightMotor.setTargetPosition(400);
+        hardware.backRightMotor.setTargetPosition(-400);
+        hardware.frontLeftMotor.setTargetPosition(-400);
+        hardware.backLeftMotor.setTargetPosition(400);
 
-        setAllMotorPower(0.5);
+        setAllMotorPower(0.25);
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
 
         // Go forward/line up with junction
         setAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllMotorTargetPosition(250);
+        setAllMotorTargetPosition(212);
         setAllMotorPower(0.5);
         setAllMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
 
         // Arm cycle starts
-        moveArm(-3000, 1);
+//        moveArm(-3000);
+        elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevatorMotor.setTargetPosition(2000);
+        elevatorMotor.setPower(0.45);
+        elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        while (hardware.armMotor.isBusy()) {
+//            twistServo.setPosition(CLAW_ROTATE_UP);
+//            telemetry.addData("Elevator", "Moving");
+//            telemetry.addData("elevator ticks", elevatorMotor.getCurrentPosition());
+//            telemetry.update();
+//        }
+        elevatorMotor.setPower(0);
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPosition(-600);
+        hardware.armMotor.setPower(0.5);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
@@ -162,13 +196,19 @@ public class AutoSleeveCycle extends LinearOpMode {
         }
     }
 
-    public void moveArm(int target, double power) {
-        double kp = 5.0;
-        int threshold = 500;
-        int error = target - hardware.armMotor.getCurrentPosition();
-
-        while (Math.abs(error) > threshold) {
-            hardware.armMotor.setPower(kp * error);
-        }
+    public void moveArm(int target) {
+//        double kp = 5.0;
+//        int threshold = 500;
+//        int error = target - hardware.armMotor.getCurrentPosition();
+//
+//        telemetry.addData("error", error);
+//        telemetry.update();
+//
+//        while (Math.abs(error) > threshold) {
+//            hardware.armMotor.setPower(kp * error);
+//            telemetry.addData("did it run", "it ran");
+//            telemetry.update();
+//        }
+//        hardware.armMotor.setPower();
     }
 }

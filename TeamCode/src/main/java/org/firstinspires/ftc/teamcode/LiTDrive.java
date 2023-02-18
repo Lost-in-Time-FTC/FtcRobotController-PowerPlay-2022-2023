@@ -5,21 +5,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+//import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double CLAW_OPEN = 0.4;
-    final double CLAW_CLOSE = 0.1;
+    final double CLAW_OPEN = 0.1;
+    final double CLAW_CLOSE = 0.4;
     final double CLAW_ROTATE_UP = 0.73;
     final double CLAW_ROTATE_DOWN = 0.1;
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
-    TouchSensor touchSensor;
+//    TouchSensor touchSensor;
     boolean clawToggle = false;
     boolean rotateToggle = false;
     double armPivotSpeed = 0.85;
@@ -44,7 +44,7 @@ public class LiTDrive extends LinearOpMode {
         twistServo = hardwareMap.get(Servo.class, "twist");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+//        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -92,9 +92,9 @@ public class LiTDrive extends LinearOpMode {
             clawServo.setPosition(CLAW_OPEN);
         }
 
-        if (touchSensor.isPressed()) {
-            clawServo.setPosition(CLAW_CLOSE);
-        }
+//        if (touchSensor.isPressed()) {
+//            clawServo.setPosition(CLAW_CLOSE);
+//        }
     }
 
     public void rotateClaw() {
