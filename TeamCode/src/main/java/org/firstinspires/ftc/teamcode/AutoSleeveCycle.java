@@ -73,25 +73,30 @@ public class AutoSleeveCycle extends LinearOpMode {
         }
 
         waitForStart();
-        //hardware.armMotor.setPositionPIDFCoefficients(20);
-        //hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // hardware.armMotor.setPositionPIDFCoefficients(20);
+        // hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
-        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
-        // The cycle
+        // Close claw with preloaded cone
         hardware.clawServo.setPosition(CLAW_CLOSE);
+
+        // Allow enough time for servo to close
         sleep(200);
+
+        // Move arm straight up
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.armMotor.setTargetPosition(900);
         hardware.armMotor.setPower(0.5);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         while (hardware.armMotor.isBusy()) {
+            // Rotate the claw to prepare for later placement
             twistServo.setPosition(CLAW_ROTATE_UP);
-            telemetry.addData("Arm", "Moving");
-            telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
-            telemetry.update();
         }
+
+        trackCurrentPositionTelemetry();
+
         hardware.armMotor.setPower(0);
 
         // Go forward
@@ -136,23 +141,21 @@ public class AutoSleeveCycle extends LinearOpMode {
         trackCurrentPositionTelemetry();
         setAllMotorPower(0);
 
-        // Arm cycle starts
-//        moveArm(-3000);
+        // Extend slides
         elevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorMotor.setTargetPosition(2000);
         elevatorMotor.setPower(0.45);
         elevatorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        while (hardware.armMotor.isBusy()) {
-//            twistServo.setPosition(CLAW_ROTATE_UP);
-//            telemetry.addData("Elevator", "Moving");
-//            telemetry.addData("elevator ticks", elevatorMotor.getCurrentPosition());
-//            telemetry.update();
-//        }
+        trackCurrentPositionTelemetry();
         elevatorMotor.setPower(0);
+
+        // Move arm forward toward junction
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPosition(-600);
+        hardware.armMotor.setTargetPosition(-1200);
         hardware.armMotor.setPower(0.5);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        trackCurrentPositionTelemetry();
+        hardware.armMotor.setPower(0);
 
         // The parking after the cycle
         if (position == SleeveDetection.ParkingPosition.LEFT) {
@@ -186,29 +189,15 @@ public class AutoSleeveCycle extends LinearOpMode {
     }
 
     public void trackCurrentPositionTelemetry() {
-        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
+        while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy() || hardware.armMotor.isBusy() || elevatorMotor.isBusy()) {
             telemetry.addData("Path", "Moving");
             telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
             telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
             telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
             telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
+            telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
+            telemetry.addData("elevator ticks", elevatorMotor.getCurrentPosition());
             telemetry.update();
         }
-    }
-
-    public void moveArm(int target) {
-//        double kp = 5.0;
-//        int threshold = 500;
-//        int error = target - hardware.armMotor.getCurrentPosition();
-//
-//        telemetry.addData("error", error);
-//        telemetry.update();
-//
-//        while (Math.abs(error) > threshold) {
-//            hardware.armMotor.setPower(kp * error);
-//            telemetry.addData("did it run", "it ran");
-//            telemetry.update();
-//        }
-//        hardware.armMotor.setPower();
     }
 }
