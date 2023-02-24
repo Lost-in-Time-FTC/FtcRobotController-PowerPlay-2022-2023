@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
+//import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -18,7 +19,7 @@ public class LiTDrive extends LinearOpMode {
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
-    //    TouchSensor touchSensor;
+//    TouchSensor touchSensor;
     boolean clawToggle = false;
     boolean rotateToggle = false;
     double armPivotSpeed = 0.85;
