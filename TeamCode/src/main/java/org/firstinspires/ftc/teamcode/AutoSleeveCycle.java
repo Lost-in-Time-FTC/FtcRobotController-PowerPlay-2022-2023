@@ -12,20 +12,20 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
     // PID
     public static double speed = 1200; // Arbitrary number; static to allow for analyzing how PID performs through multiple speeds in dashboard
     public static PIDCoefficients pidCoefficients = new PIDCoefficients(0, 0, 0); // PID coefficients that need to be tuned probably through FTC dashboard
+    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); // PID gains which we will define later in the process
+    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); // Timer
     // Constants
     final double CLAW_OPEN = -0.1;
     final double CLAW_CLOSE = 0.4;
     final double CLAW_ROTATE_UP = 0.73;
     final double CLAW_ROTATE_DOWN = 0.1;
     final double ARM_PIVOT_SPEED = 0.85;
-    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); // PID gains which we will define later in the process
     // Name of the Webcam to be set in the config
     public String webcamName = "Webcam 1";
     // Hardware
     public Hardware hardware;
     public SleeveDetection sleeveDetection;
     public OpenCvCamera camera;
-    ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); // Timer
 
     public final void strafeLeft(int targetPosition) {
         hardware.frontRightMotor.setTargetPosition(targetPosition);
@@ -85,7 +85,7 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
         hardware.backLeftMotor.setTargetPositionTolerance(tolerance);
     }
 
-    public void trackAllWheelCurrentPositionTelemetry() {
+    public final void trackAllWheelCurrentPositionTelemetry() {
         while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
             telemetry.addData("Path", "Moving");
             telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
