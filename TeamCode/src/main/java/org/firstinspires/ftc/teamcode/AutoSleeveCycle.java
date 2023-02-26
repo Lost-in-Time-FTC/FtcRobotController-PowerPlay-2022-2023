@@ -5,7 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @SuppressWarnings("unused")
 public abstract class AutoSleeveCycle extends LinearOpMode {
@@ -26,6 +29,42 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
     public Hardware hardware;
     public SleeveDetection sleeveDetection;
     public OpenCvCamera camera;
+
+    public final void initHardware() {
+        // Generic hardware
+        hardware = new Hardware(hardwareMap);
+
+        // OpenCV camera
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
+        sleeveDetection = new SleeveDetection();
+        camera.setPipeline(sleeveDetection);
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
+    }
+
+    public final void trackTelemetryWhileNotIsStarted() {
+        while (!isStarted()) {
+            telemetry.addData("Parking Position: ", sleeveDetection.getPosition());
+            telemetry.addData("Path", "Moving");
+            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
+            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
+            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
+            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
+            telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
+            telemetry.addData("elevator ticks", hardware.elevatorMotor.getCurrentPosition());
+            telemetry.update();
+        }
+    }
 
     public final void strafeLeft(int targetPosition) {
         hardware.frontRightMotor.setTargetPosition(targetPosition);
@@ -85,7 +124,7 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
         hardware.backLeftMotor.setTargetPositionTolerance(tolerance);
     }
 
-    public final void trackAllWheelCurrentPositionTelemetry() {
+    public final void trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy() {
         while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
             telemetry.addData("Path", "Moving");
             telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());

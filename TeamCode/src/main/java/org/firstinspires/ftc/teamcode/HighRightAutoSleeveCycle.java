@@ -3,65 +3,37 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
 @SuppressWarnings("unused")
 @Autonomous(name = "High Right Auto Cycle w/ Park")
 public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
     @Override
     public void runOpMode() throws InterruptedException {
-        // Init hardware
-        hardware = new Hardware(hardwareMap);
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        sleeveDetection = new SleeveDetection();
-        camera.setPipeline(sleeveDetection);
-
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-
-        while (!isStarted()) {
-            telemetry.addData("Parking Position: ", sleeveDetection.getPosition());
-            telemetry.addData("Path", "Moving");
-            telemetry.addData("fr ticks", hardware.frontRightMotor.getCurrentPosition());
-            telemetry.addData("fl ticks", hardware.frontLeftMotor.getCurrentPosition());
-            telemetry.addData("br ticks", hardware.backRightMotor.getCurrentPosition());
-            telemetry.addData("bl ticks", hardware.backLeftMotor.getCurrentPosition());
-            telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
-            telemetry.addData("elevator ticks", hardware.elevatorMotor.getCurrentPosition());
-            telemetry.update();
-        }
-
+        initHardware();
+        trackTelemetryWhileNotIsStarted();
         waitForStart();
+
         // hardware.armMotor.setPositionPIDFCoefficients(20);
         // hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Store detected parking position
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
 
-        // The cycle
+        // Pick up preloaded cone and adjust arm position
         hardware.clawServo.setPosition(CLAW_CLOSE);
         sleep(500);
+
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hardware.armMotor.setTargetPosition(675);
-        hardware.armMotor.setPower(0.5);
+        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         while (hardware.armMotor.isBusy()) {
             hardware.twistServo.setPosition(CLAW_ROTATE_UP);
             telemetry.addData("Arm", "Moving");
             telemetry.addData("arm ticks", hardware.armMotor.getCurrentPosition());
             telemetry.update();
         }
+
         hardware.armMotor.setPower(0);
 
         // Go forward
@@ -83,7 +55,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
         rotateLeft(900);
         setAllWheelMotorPower(0.25);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetry();
+        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
         setAllWheelMotorPower(0);
 
         // Strafe right
@@ -91,7 +63,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
         strafeRight(525);
         setAllWheelMotorPower(0.25);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetry();
+        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
         setAllWheelMotorPower(0);
 
         // Go forward/line up with junction
@@ -99,7 +71,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
         setAllWheelMotorTargetPosition(160);
         setAllWheelMotorPower(0.5);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetry();
+        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
         setAllWheelMotorPower(0);
 
         // Arm cycle starts
@@ -131,7 +103,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
         rotateRight(1200);
         setAllWheelMotorPower(0.5);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetry();
+        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
         setAllWheelMotorPower(0);
 
         // Move backwards in parking
@@ -139,7 +111,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
         setAllWheelMotorTargetPosition(-225);
         setAllWheelMotorPower(0.5);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        trackAllWheelCurrentPositionTelemetry();
+        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
         setAllWheelMotorPower(0);
 
         // The parking after the cycle
@@ -150,7 +122,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
             strafeLeft(750);
             setAllWheelMotorPower(1);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetry();
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
         } else if (position == SleeveDetection.ParkingPosition.CENTER) {
             telemetry.addData("center", "4324");
@@ -159,7 +131,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
             strafeLeft(450);
             setAllWheelMotorPower(1);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetry();
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
         } else if (position == SleeveDetection.ParkingPosition.RIGHT) {
             telemetry.addData("right", "4324");
@@ -168,7 +140,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
             strafeRight(1700);
             setAllWheelMotorPower(1);
             setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-            trackAllWheelCurrentPositionTelemetry();
+            trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
             setAllWheelMotorPower(0);
         }
     }
