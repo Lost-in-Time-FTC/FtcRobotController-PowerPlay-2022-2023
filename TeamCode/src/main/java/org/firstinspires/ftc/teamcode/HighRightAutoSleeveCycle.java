@@ -39,7 +39,7 @@ public class HighRightAutoSleeveCycle extends AutoSleeveCycle {
         // Go forward
         setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setAllWheelMotorTargetPosition(2300);
-        setAllWheelMotorPower(0.6);
+        setAllWheelMotorPower(0.8);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
             hardware.elevatorMotor.setPower(0.7);
