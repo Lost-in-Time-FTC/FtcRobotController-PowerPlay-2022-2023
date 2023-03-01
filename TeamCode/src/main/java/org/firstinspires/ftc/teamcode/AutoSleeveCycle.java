@@ -22,7 +22,9 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
     final double CLAW_CLOSE = 0.4;
     final double CLAW_ROTATE_UP = 0.73;
     final double CLAW_ROTATE_DOWN = 0.1;
-    final double ARM_PIVOT_SPEED = 0.85;
+    final double ARM_PIVOT_SPEED = 1;
+    final double ARM_PIVOT_SPEED_DOWN = 0.75;
+    final int ARM_POSITION_TOLERANCE = 10;
     // Name of the Webcam to be set in the config
     public String webcamName = "Webcam 1";
     // Hardware
@@ -113,7 +115,7 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
         hardware.backRightMotor.setTargetPosition(position);
         hardware.frontLeftMotor.setTargetPosition(position);
         hardware.backLeftMotor.setTargetPosition(position);
-        setAllWheelMotorTargetPositionTolerance(10);
+        setAllWheelMotorTargetPositionTolerance(30);
     }
 
     public final void setAllWheelMotorTargetPositionTolerance(int tolerance) {

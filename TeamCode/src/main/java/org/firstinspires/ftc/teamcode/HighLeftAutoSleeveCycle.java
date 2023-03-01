@@ -23,6 +23,7 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
         sleep(500);
 
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
         hardware.armMotor.setTargetPosition(675);
         hardware.armMotor.setPower(ARM_PIVOT_SPEED);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -39,7 +40,7 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
         // Go forward
         setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setAllWheelMotorTargetPosition(2300);
-        setAllWheelMotorPower(0.8);
+        setAllWheelMotorPower(0.6);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (hardware.frontRightMotor.isBusy() || hardware.frontLeftMotor.isBusy() || hardware.backRightMotor.isBusy() || hardware.backLeftMotor.isBusy()) {
@@ -62,7 +63,7 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
 
         // Strafe left
         setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        strafeLeft(375);
+        strafeLeft(340);
         setAllWheelMotorPower(0.25);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
@@ -78,6 +79,7 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
 
         // Arm cycle starts
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
         hardware.armMotor.setTargetPosition(-300);
         hardware.armMotor.setPower(ARM_PIVOT_SPEED);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -90,12 +92,13 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
         hardware.armMotor.setPower(0);
 
         hardware.clawServo.setPosition(CLAW_OPEN);
-        sleep(1000);
+        sleep(250);
 
         // Move down for the first cycle
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
         hardware.armMotor.setTargetPosition(1825); // Probably correct?
-        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+        hardware.armMotor.setPower(0.75);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (hardware.armMotor.isBusy()) {
@@ -103,23 +106,83 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
         }
 
         hardware.clawServo.setPosition(CLAW_CLOSE);
-        sleep(1500);
+        sleep(400);
 
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.armMotor.setTargetPosition(-1800);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
+        hardware.armMotor.setTargetPosition(-2000);
         hardware.armMotor.setPower(ARM_PIVOT_SPEED);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (hardware.armMotor.isBusy()) {
-            sleep(1000);
+            sleep(250);
             hardware.twistServo.setPosition(CLAW_ROTATE_UP);
         }
 
         hardware.clawServo.setPosition(CLAW_OPEN);
-        sleep(1500);
+        sleep(250);
+
+        // move down for 3rd cone
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
+        hardware.armMotor.setTargetPosition(1950);
+        hardware.armMotor.setPower(ARM_PIVOT_SPEED_DOWN);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (hardware.armMotor.isBusy()) {
+            sleep(250);
+            hardware.twistServo.setPosition(CLAW_ROTATE_DOWN);
+        }
+
+        hardware.clawServo.setPosition(CLAW_CLOSE);
+        sleep(400);
+
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
+        hardware.armMotor.setTargetPosition(-2000);
+        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (hardware.armMotor.isBusy()) {
+            sleep(250);
+            hardware.twistServo.setPosition(CLAW_ROTATE_UP);
+        }
+
+        hardware.clawServo.setPosition(CLAW_OPEN);
+        sleep(250);
+
+        // move down for 4th cone
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
+        hardware.armMotor.setTargetPosition(2050);
+        hardware.armMotor.setPower(ARM_PIVOT_SPEED_DOWN);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (hardware.armMotor.isBusy()) {
+            sleep(250);
+            hardware.twistServo.setPosition(CLAW_ROTATE_DOWN);
+        }
+
+        hardware.clawServo.setPosition(CLAW_CLOSE);
+        sleep(400);
+
+        hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
+        hardware.armMotor.setTargetPosition(-2100);
+        hardware.armMotor.setPower(ARM_PIVOT_SPEED);
+        hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (hardware.armMotor.isBusy()) {
+            sleep(250);
+            hardware.twistServo.setPosition(CLAW_ROTATE_UP);
+        }
+
+        hardware.clawServo.setPosition(CLAW_OPEN);
+        sleep(250);
 
         // Finish cycle
         hardware.armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.armMotor.setTargetPositionTolerance(ARM_POSITION_TOLERANCE);
         hardware.armMotor.setTargetPosition(500);
         hardware.armMotor.setPower(ARM_PIVOT_SPEED);
         hardware.armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -133,9 +196,17 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
         hardware.elevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hardware.armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        // Go forward/line up with junction again
+        setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setAllWheelMotorTargetPosition(40);
+        setAllWheelMotorPower(0.5);
+        setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
+        setAllWheelMotorPower(0);
+
         // Rotate left to park
         setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rotateLeft(1200);
+        rotateLeft(1100);
         setAllWheelMotorPower(0.5);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
@@ -143,7 +214,7 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
 
         // Move backwards in parking
         setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setAllWheelMotorTargetPosition(-225);
+        setAllWheelMotorTargetPosition(-200);
         setAllWheelMotorPower(0.5);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();
