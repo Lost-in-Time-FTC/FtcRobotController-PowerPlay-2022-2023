@@ -18,13 +18,15 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
     public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); // PID gains which we will define later in the process
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); // Timer
     // Constants
-    final double CLAW_OPEN = -0.1;
+    final double CLAW_OPEN = 0.15;
+    final double CLAW_WIDE_OPEN = -0.1;
     final double CLAW_CLOSE = 0.4;
     final double CLAW_ROTATE_UP = 0.73;
     final double CLAW_ROTATE_DOWN = 0.1;
     final double ARM_PIVOT_SPEED = 1;
-    final double ARM_PIVOT_SPEED_DOWN = 0.75;
-    final int ARM_POSITION_TOLERANCE = 10;
+    final double ARM_PIVOT_SPEED_DOWN = 1;
+    final int ARM_POSITION_LOW_TOLERANCE = 10;
+    final int ARM_POSITION_HIGH_TOLERANCE = 50;
     // Name of the Webcam to be set in the config
     public String webcamName = "Webcam 1";
     // Hardware
