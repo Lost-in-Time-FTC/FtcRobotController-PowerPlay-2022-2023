@@ -18,10 +18,10 @@ public abstract class AutoSleeveCycle extends LinearOpMode {
     public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0); // PID gains which we will define later in the process
     ElapsedTime PIDTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS); // Timer
     // Constants
-    final double CLAW_OPEN = 0.15;
-    final double CLAW_WIDE_OPEN = -0.1;
+    final double CLAW_OPEN = 0.35;
+    final double CLAW_WIDE_OPEN = 0.2;
     final double CLAW_CLOSE = 0.4;
-    final double CLAW_ROTATE_UP = 0.73;
+    final double CLAW_ROTATE_UP = 0.75;
     final double CLAW_ROTATE_DOWN = 0.1;
     final double ARM_PIVOT_SPEED = 1;
     final double ARM_PIVOT_SPEED_DOWN = 1;
