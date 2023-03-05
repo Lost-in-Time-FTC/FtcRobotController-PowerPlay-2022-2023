@@ -8,6 +8,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+@SuppressWarnings("unused")
 @Autonomous(name = "Color Sleeve Parking")
 public class AutoSleevePark extends LinearOpMode {
     // Name of the Webcam to be set in the config
@@ -48,7 +49,7 @@ public class AutoSleevePark extends LinearOpMode {
         SleeveDetection.ParkingPosition position = sleeveDetection.getPosition();
         hardware.driveForwardTime(0.5, 900);
         if (position == SleeveDetection.ParkingPosition.LEFT) {
-            hardware.driveLeftTime(0.7, 1500);
+            hardware.driveLeftTime(0.5, 1300);
         } else if (position == SleeveDetection.ParkingPosition.RIGHT) {
             hardware.driveRightTime(0.5, 1300);
         }

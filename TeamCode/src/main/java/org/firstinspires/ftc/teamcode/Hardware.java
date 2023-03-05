@@ -1,39 +1,38 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
+@SuppressWarnings("unused")
 public class Hardware {
-    private final Servo twistServo = null;
-    double clawPosition = 0.5;
-    private DcMotor frontLeftMotor;
-    private DcMotor frontRightMotor;
-    private DcMotor backLeftMotor;
-    private DcMotor backRightMotor;
-    private Servo clawServo;
-    private DcMotor elevatorMotor;
-    private DcMotor armMotor;
-    // private DcMotor duckMotor = null;
+    public Servo twistServo;
+    public DcMotorEx frontLeftMotor;
+    public DcMotorEx frontRightMotor;
+    public DcMotorEx backLeftMotor;
+    public DcMotorEx backRightMotor;
+    public Servo clawServo;
+    public DcMotorEx elevatorMotor;
+    public DcMotorEx armMotor;
 
     public Hardware(HardwareMap hardwareMap) {
-        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
-        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
-        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
-        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
+        backRightMotor = hardwareMap.get(DcMotorEx.class, "backRightMotor");
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         clawServo = hardwareMap.get(Servo.class, "Servo");
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-
+        elevatorMotor = hardwareMap.get(DcMotorEx.class, "elevatorMotor");
+        armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
+        twistServo = hardwareMap.get(Servo.class, "twist");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        armMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 

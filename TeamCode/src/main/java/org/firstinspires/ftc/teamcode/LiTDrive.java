@@ -5,23 +5,24 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+@SuppressWarnings("unused")
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double CLAW_OPEN = 0.3;
-    final double CLAW_CLOSE = 0;
-    final double CLAW_ROTATE_UP = 0.73;
-    final double CLAW_ROTATE_DOWN = 0;
+    final double CLAW_OPEN = 0.7;
+    final double CLAW_CLOSE = 1.5;
+    final double CLAW_ROTATE_UP = 0.66;
+    final double CLAW_ROTATE_DOWN = -0.96;
+
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
-    TouchSensor touchSensor;
+    //    TouchSensor touchSensor;
     boolean clawToggle = false;
     boolean rotateToggle = false;
-    double armPivotSpeed = 0.75;
+    double armPivotSpeed = 0.85;
     private DcMotor frontLeftMotor = null;
     private DcMotor frontRightMotor = null;
     private DcMotor backLeftMotor = null;
@@ -43,12 +44,12 @@ public class LiTDrive extends LinearOpMode {
         twistServo = hardwareMap.get(Servo.class, "twist");
         elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+//        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         armMotor.setDirection(DcMotor.Direction.FORWARD);
         elevatorMotor.setDirection(DcMotor.Direction.FORWARD);
 
@@ -91,9 +92,9 @@ public class LiTDrive extends LinearOpMode {
             clawServo.setPosition(CLAW_OPEN);
         }
 
-        if (touchSensor.isPressed()) {
-            clawServo.setPosition(CLAW_CLOSE);
-        }
+//        if (touchSensor.isPressed()) {
+//            clawServo.setPosition(CLAW_CLOSE);
+//        }
     }
 
     public void rotateClaw() {
@@ -112,8 +113,8 @@ public class LiTDrive extends LinearOpMode {
 
         // Strafing
         double FL = Range.clip(drive + strafe + turn, -0.5, 0.5);
-        double FR = Range.clip(drive - strafe + turn, -0.5, 0.5);
-        double BL = Range.clip(drive - strafe - turn, -0.5, 0.5);
+        double FR = Range.clip(drive - strafe - turn, -0.5, 0.5);
+        double BL = Range.clip(drive - strafe + turn, -0.5, 0.5);
         double BR = Range.clip(drive + strafe - turn, -0.5, 0.5);
 
         double QJSpeed = 1.75;
