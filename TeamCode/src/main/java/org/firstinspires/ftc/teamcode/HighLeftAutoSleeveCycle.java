@@ -63,7 +63,7 @@ public class HighLeftAutoSleeveCycle extends AutoSleeveCycle {
 
         // Strafe left
         setAllWheelMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        strafeLeft(340);
+        strafeLeft(375);
         setAllWheelMotorPower(0.25);
         setAllWheelMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         trackAllWheelCurrentPositionTelemetryWhileMotorIsBusy();

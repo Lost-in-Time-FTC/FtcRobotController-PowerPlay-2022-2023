@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double CLAW_OPEN = 0.23;
-    final double CLAW_CLOSE = 0.4;
-    final double CLAW_ROTATE_UP = 0.78;
-    final double CLAW_ROTATE_DOWN = 0.1;
+    final double CLAW_OPEN = 0.7;
+    final double CLAW_CLOSE = 1.5;
+    final double CLAW_ROTATE_UP = 0.66;
+    final double CLAW_ROTATE_DOWN = -0.96;
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
