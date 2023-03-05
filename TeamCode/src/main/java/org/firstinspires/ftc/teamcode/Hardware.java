@@ -5,19 +5,16 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
+@SuppressWarnings("unused")
 public class Hardware {
-    private final Servo twistServo = null;
+    public Servo twistServo;
     public DcMotorEx frontLeftMotor;
     public DcMotorEx frontRightMotor;
     public DcMotorEx backLeftMotor;
     public DcMotorEx backRightMotor;
     public Servo clawServo;
-    public DcMotor elevatorMotor;
+    public DcMotorEx elevatorMotor;
     public DcMotorEx armMotor;
-    double clawPosition = 0.5;
-
-    // private DcMotor duckMotor = null;
 
     public Hardware(HardwareMap hardwareMap) {
         frontRightMotor = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
@@ -25,9 +22,9 @@ public class Hardware {
         backRightMotor = hardwareMap.get(DcMotorEx.class, "backRightMotor");
         backLeftMotor = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
         clawServo = hardwareMap.get(Servo.class, "Servo");
-        elevatorMotor = hardwareMap.get(DcMotor.class, "elevatorMotor");
+        elevatorMotor = hardwareMap.get(DcMotorEx.class, "elevatorMotor");
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
-
+        twistServo = hardwareMap.get(Servo.class, "twist");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery

@@ -8,6 +8,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+@SuppressWarnings("unused")
 @Autonomous(name = "Color Sleeve Parking")
 public class AutoSleevePark extends LinearOpMode {
     // Name of the Webcam to be set in the config

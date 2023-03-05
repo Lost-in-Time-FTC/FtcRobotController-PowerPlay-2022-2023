@@ -5,21 +5,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+@SuppressWarnings("unused")
 @TeleOp(name = "LiT Drive Program 2022-2023", group = "Linear OpMode")
 
 public class LiTDrive extends LinearOpMode {
-    final double CLAW_OPEN = 0;
-    final double CLAW_CLOSE = 0.4;
-    final double CLAW_ROTATE_UP = 0.73;
-    final double CLAW_ROTATE_DOWN = 0.1;
+    final double CLAW_OPEN = 0.7;
+    final double CLAW_CLOSE = 1.5;
+    final double CLAW_ROTATE_UP = 0.66;
+    final double CLAW_ROTATE_DOWN = -0.96;
 
     // Declare OpMode members
     private final ElapsedTime runtime = new ElapsedTime();
-//    TouchSensor touchSensor;
+    //    TouchSensor touchSensor;
     boolean clawToggle = false;
     boolean rotateToggle = false;
     double armPivotSpeed = 0.85;
